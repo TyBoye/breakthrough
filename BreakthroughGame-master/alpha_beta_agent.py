@@ -76,6 +76,8 @@ class AlphaBetaAgent:
         elif self.turn == 2:
             self.piece_num = initialstate.transfer(final_action).black_num
         print(final_action.getString())
+        for row in self.boardmatrix:
+            print(row)
         return initialstate.transfer(final_action), self.nodes, self.piece_num
 
     # order actions to make more pruning

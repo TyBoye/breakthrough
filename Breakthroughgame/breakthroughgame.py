@@ -12,8 +12,6 @@ class BreakthroughGame:
         self.board = 0
         self.blackchess = 0
         self.whitechess = 0
-        self.outline = 0
-        self.reset = 0
         self.winner = 0
         self.computer = None
 
@@ -44,8 +42,12 @@ class BreakthroughGame:
         self.total_step_1 = 0
         self.total_step_2 = 0
         self.eat_piece = 0
+        self.game_over = False  # checks whether a winner has been found
 
     def run(self, status):
+
+        if self.game_over:  # check if the game is over
+            return True
 
         self.status = status
 
@@ -71,6 +73,17 @@ class BreakthroughGame:
                       'node_per_move_2 = ', self.total_nodes_2 / self.total_step_2,
                       'time_per_move_2 = ', self.total_time_2 / self.total_step_2,
                       'have_eaten: ', self.eat_piece)
+        if self.status == 3 or self.isgoalstate():
+            self.game_over = True
+            winner = "Black" if self.turn == 2 else "White"
+            print(f"\nGame Over: {winner} wins!")
+            print(f"Final board:")
+            for row in self.boardmatrix:
+                print(row)
+            return True
+        return False
+
+
 
         # Events accepting
         # for event in pygame.event.get():
@@ -310,8 +323,9 @@ class BreakthroughGame:
 
 def main():
     game = BreakthroughGame()
-    while 1:
-        game.run(5)
+    while True:
+        if game.run(5): # game is over once run returns True
+            break
 
 
 if __name__ == '__main__':
