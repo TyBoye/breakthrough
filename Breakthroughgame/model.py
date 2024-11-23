@@ -155,19 +155,6 @@ class State:
             return self.offensive_function(turn)
         elif self.function == 2:
             return self.defensive_function(turn)
-        elif self.function == 3:
-            return self.offensive_function_3_workers(turn)
-        elif self.function == 4:
-            return self.defensive_function_3_workers(turn)
-        elif self.function == 5:
-            return self.offensive_function_long(turn)
-        elif self.function == 6:
-            return self.defensive_function_long(turn)
-
-
-
-
-
 
     # def myscore(self, turn):
     #     if turn == 1:
@@ -289,73 +276,21 @@ class State:
 
     def offensive_function(self, turn):
         """
-        2 * offensive_component + defensive_componet + tie_breaking
+        2 * offensive_component + defensive_component + tie_breaking
         """
-        # return 2 * self.myscore(turn) - 1 * self.enemyscore(turn)
+        return 2 * (self.myscore(turn) - 1 * self.enemyscore(turn)) + random()
                #+  self.get_important_pos_baseline(turn)
-        return 2 * (30 - (self.myscore(turn) - self.enemyscore(turn))) + random()
 
     def defensive_function(self, turn):
         """
-        2 * defensive_component + offensive_componet + tie_breaking
+        2 * defensive_component + offensive_component + tie_breaking
         """
-        # return 1 * self.myscore(turn) - 2 * self.enemyscore(turn)
+        return (self.myscore(turn) - 2 * self.enemyscore(turn)) + random()
+        #
                #+ 2 * self.get_vertical_pairs(turn) + 4 * self.get_important_pos_baseline(turn)
-        return 2 * (self.myscore(turn) - self.enemyscore(turn)) + random()
 
-    def myscore_3_workers(self, turn):
-        if turn == 1:
-            return len(self.black_positions) \
-                   + sum(pos[0] for pos in self.black_positions) \
-                   + sum(sorted([pos[0] for pos in self.black_positions], reverse=True)[0:3]) \
-                   + self.winningscore(turn)
-        elif turn == 2:
-            return len(self.white_positions) \
-                   + sum(7 - pos[0] for pos in self.white_positions) \
-                   + sum(sorted([7 - pos[0] for pos in self.white_positions], reverse=True)[0:3]) \
-                   + self.winningscore(turn)
+    def offensive_function2(self, turn):
+        return 2 * (30 - (self.myscore(turn) - self.enemyscore(turn))) + random() # added noise from random() helps break ties
 
-    def enemyscore_3_workers(self, turn):
-        if turn == 1:
-            return len(self.white_positions) \
-                   + sum(7 - pos[0] for pos in self.white_positions) \
-                   + sum(sorted([7 - pos[0] for pos in self.white_positions], reverse=True)[0:3]) \
-                   + self.winningscore(2)
-        elif turn == 2:
-            return len(self.black_positions) \
-                   + sum(pos[0] for pos in self.black_positions) \
-                   + sum(sorted([pos[0] for pos in self.black_positions], reverse=True)[0:3]) \
-                   + self.winningscore(1)
-
-    def myscore_long(self, turn):
-        if turn == 1:
-            return  len(self.black_positions) \
-                   + 5 * sum(pos[0] for pos in self.black_positions) \
-                   + self.winningscore(turn)
-
-        elif turn == 2:
-            return len(self.white_positions) \
-                   + 5 *sum(7 - pos[0] for pos in self.white_positions) \
-                   + self.winningscore(turn)
-
-    def enemyscore_long(self, turn):
-        if turn == 1:
-            return len(self.white_positions) \
-                   + 5 * sum(7 - pos[0] for pos in self.white_positions) \
-                   + self.winningscore(2)
-        elif turn == 2:
-            return len(self.black_positions) \
-                   + 5 * sum(pos[0] for pos in self.black_positions) \
-                   + self.winningscore(1)
-
-    def offensive_function_3_workers(self, turn):
-        return 3 * self.myscore_3_workers(turn) - self.enemyscore_3_workers(turn)
-
-    def defensive_function_3_workers(self, turn):
-        return self.myscore_3_workers(turn) - 3 * self.enemyscore_3_workers(turn)
-
-    def offensive_function_long(self, turn):
-        return 4 * self.myscore_long(turn) - self.enemyscore_long(turn)
-
-    def defensive_function_long(self, turn):
-        return self.myscore_long(turn) - 4 * self.enemyscore_long(turn)
+    def defensive_function2(self, turn):
+        return 2 * (self.myscore(turn) - self.enemyscore(turn)) + random()  # added noise from random() helps break ties
