@@ -155,6 +155,11 @@ class State:
             return self.offensive_function(turn)
         elif self.function == 2:
             return self.defensive_function(turn)
+        elif self.function == 3:
+            return self.offensive_function2(turn)
+        elif self.function == 4:
+            return self.defensive_function2(turn)
+
 
     # def myscore(self, turn):
     #     if turn == 1:
@@ -272,6 +277,8 @@ class State:
             return len(self.black_positions) \
                    + sum(pos[0] for pos in self.black_positions) + self.winningscore(1)
                    #+ max(pos[0] for pos in self.black_positions) \
+
+
 
 
     def offensive_function(self, turn):

@@ -1,5 +1,3 @@
-import pygame
-# from pygame.locals import *
 import sys, os, math
 from minimax_agent import *
 from model import *
@@ -41,7 +39,8 @@ class BreakthroughGame:
         self.total_time_2 = 0
         self.total_step_1 = 0
         self.total_step_2 = 0
-        self.eat_piece = 0
+        self.eat_piece_1 = 0
+        self.eat_piece_2 = 0
         self.game_over = False  # checks whether a winner has been found
 
     def run(self, status):
@@ -51,194 +50,101 @@ class BreakthroughGame:
 
         self.status = status
 
-        if self.status == 5:
+        if self.status in [5,6,7,9,9,10]:
+            """
+            5. Minimax (Offensive Heuristic 1) vs Alpha-beta (Offensive Heuristic 1)
+            6. Alpha-beta (Offensive Heuristic 2) vs Alpha-beta (Defensive Heuristic 1)\n"
+            7. Alpha-beta (Defensive Heuristic 2) vs Alpha-beta (Offensive Heuristic 1)\n"
+            8. Alpha-beta (Offensive Heuristic 2) vs Alpha-beta (Offensive Heuristic 1)\n"
+            9. Alpha-beta (Defensive Heuristic 2) vs Alpha-beta (Defensive Heuristic 1)\n"
+            10. Alpha-beta (Offensive Heuristic 2) vs Alpha-beta (Defensive Heuristic 2)\n")
+            
+            the default search type is set to alpha-beta
+            """
+            blacksearch = 2
+            whitesearch = 2
+            blackheuristic = 0
+            whiteheuristic = 0
+
+            match (self.status):
+
+                case 5:
+                    blacksearch = 1 # the black pieces to minimax
+                    blackheuristic = 1
+                    whiteheuristic = 1
+                case 6:
+                    blackheuristic = 3
+                    whiteheuristic = 2
+                case 7:
+                    blackheuristic = 4
+                    whiteheuristic = 1
+                case 8:
+                    blackheuristic = 3
+                    whiteheuristic = 1
+                case 9:
+                    blackheuristic = 4
+                    whiteheuristic = 2
+                case 10:
+                    blackheuristic = 3
+                    whiteheuristic = 4
             # Black
             if self.turn == 1:
                 start = time.process_time()
-                self.ai_move(2, 2)
+                self.ai_move(blacksearch, blackheuristic)
                 self.total_time_1 += (time.process_time() - start)
                 self.total_step_1 += 1
                 print('total_step_1 = ', self.total_step_1,
                       'total_nodes_1 = ', self.total_nodes_1,
                       'node_per_move_1 = ', self.total_nodes_1 / self.total_step_1,
                       'time_per_move_1 = ', self.total_time_1 / self.total_step_1,
-                      'have_eaten = ', self.eat_piece)
+                      'have_eaten = ', self.eat_piece_1)
             elif self.turn == 2:
                 start = time.process_time()
-                self.ai_move(2, 2)
+                self.ai_move(whitesearch, whiteheuristic)
                 self.total_time_2 += (time.process_time() - start)
                 self.total_step_2 += 1
                 print('total_step_2 = ', self.total_step_2,
                       'total_nodes_2 = ', self.total_nodes_2,
                       'node_per_move_2 = ', self.total_nodes_2 / self.total_step_2,
                       'time_per_move_2 = ', self.total_time_2 / self.total_step_2,
-                      'have_eaten: ', self.eat_piece)
+                      'have_eaten: ', self.eat_piece_2)
         if self.status == 3 or self.isgoalstate():
             self.game_over = True
             winner = "Black" if self.turn == 2 else "White"
             print(f"\nGame Over: {winner} wins!")
+            black_dist = []
+            white_dist = []
+
+            for row in range(8):
+                for col in range(8):
+                    if self.boardmatrix[row][col] == 1:
+                        black_dist.append(7 - row)
+                    elif self.boardmatrix[row][col] == 2:
+                        white_dist.append(row)
+
+            black_min = min(black_dist) if black_dist else float('inf')
+            white_min = min(white_dist) if white_dist else float('inf')
+
+            # Print final statistics
+            print("\nFinal Statistics:")
+            print(f"Black moves: {self.total_step_1}")
+            print(f"Black average nodes per move: {self.total_nodes_1 / self.total_step_1}")
+            print(f"Black average time per move: {self.total_time_1 / self.total_step_1}")
+            print(f"Black moves needed to win: {black_min}")
+            print(f"White moves: {self.total_step_2}")
+            print(f"White average nodes per move: {self.total_nodes_2 / self.total_step_2}")
+            print(f"White average time per move: {self.total_time_2 / self.total_step_2}")
+            print(f"White moves needed to win: {white_min}")
+            print(f"Total pieces eaten: {self.eat_piece}")
+
             print(f"Final board:")
             for row in self.boardmatrix:
                 print(row)
             return True
+
+
+
         return False
-
-
-
-        # Events accepting
-        # for event in pygame.event.get():
-        #     # Quit if close the windows
-        #     if event.type == pygame.QUIT:
-        #         exit()
-        #     # reset button pressed
-        #     elif event.type == pygame.MOUSEBUTTONDOWN and self.isreset(event.pos):
-        #         self.boardmatrix = [[1, 1, 1, 1, 1, 1, 1, 1],
-        #                     [1, 1, 1, 1, 1, 1, 1, 1],
-        #                     [0, 0, 0, 0, 0, 0, 0, 0],
-        #                     [0, 0, 0, 0, 0, 0, 0, 0],
-        #                     [0, 0, 0, 0, 0, 0, 0, 0],
-        #                     [0, 0, 0, 0, 0, 0, 0, 0],
-        #                     [2, 2, 2, 2, 2, 2, 2, 2],
-        #                     [2, 2, 2, 2, 2, 2, 2, 2]]
-        #         self.turn = 1
-        #         self.status = 0
-        #     # computer button pressed
-        #     elif event.type == pygame.MOUSEBUTTONDOWN and self.iscomputer(event.pos):
-        #         self.ai_move_alphabeta(1)
-        #         # self.ai_move_minimax()
-        #
-        #     elif event.type == pygame.MOUSEBUTTONDOWN and self.isauto(event.pos):
-        #         self.status = 5
-        #
-        #     # ====================================================================================
-        #     # select chess
-        #     elif event.type == pygame.MOUSEBUTTONDOWN and self.status == 0:
-        #         x, y = event.pos
-        #         coor_y = math.floor(x / self.sizeofcell)
-        #         coor_x = math.floor(y / self.sizeofcell)
-        #         if self.boardmatrix[coor_x][coor_y] == self.turn:
-        #             self.status = 1
-        #             self.ori_y = math.floor(x / self.sizeofcell)
-        #             self.ori_x = math.floor(y / self.sizeofcell)
-        #     # check whether the selected chess can move, otherwise select other chess
-        #     elif event.type == pygame.MOUSEBUTTONDOWN and self.status == 1:
-        #         x, y = event.pos
-        #         self.new_y = math.floor(x / self.sizeofcell)
-        #         self.new_x = math.floor(y / self.sizeofcell)
-        #         if self.isabletomove():
-        #             self.movechess()
-        #             if (self.new_x == 7 and self.boardmatrix[self.new_x][self.new_y] == 1) \
-        #                 or (self.new_x == 0 and self.boardmatrix[self.new_x][self.new_y] == 2):
-        #                 self.status = 3
-        #         elif self.boardmatrix[self.new_x][self.new_y] == self.boardmatrix[self.ori_x][self.ori_y]:
-        #             self.ori_x = self.new_x
-        #             self.ori_y = self.new_y
-        #             # display the board and chess
-        # self.display()
-        # # update the screen
-        # pygame.display.flip()
-
-    # # load the graphics and rescale them
-    # def initgraphics(self):
-    #     self.board = pygame.image.load_extended(os.path.join('src', 'chessboard.jpg'))
-    #     self.board = pygame.transform.scale(self.board, (560, 560))
-    #     self.blackchess = pygame.image.load_extended(os.path.join('src', 'blackchess.png'))
-    #     self.blackchess = pygame.transform.scale(self.blackchess, (self.sizeofcell- 20, self.sizeofcell - 20))
-    #     self.whitechess = pygame.image.load_extended(os.path.join('src', 'whitechess.png'))
-    #     self.whitechess = pygame.transform.scale(self.whitechess, (self.sizeofcell - 20, self.sizeofcell - 20))
-    #     self.outline = pygame.image.load_extended(os.path.join('src', 'square-outline.png'))
-    #     self.outline = pygame.transform.scale(self.outline, (self.sizeofcell, self.sizeofcell))
-    #     self.reset = pygame.image.load_extended(os.path.join('src', 'reset.jpg'))
-    #     self.reset = pygame.transform.scale(self.reset, (80, 80))
-    #     self.winner = pygame.image.load_extended(os.path.join('src', 'winner.png'))
-    #     self.winner = pygame.transform.scale(self.winner, (250, 250))
-    #     self.computer = pygame.image.load_extended(os.path.join('src', 'computer.png'))
-    #     self.computer = pygame.transform.scale(self.computer, (80, 80))
-    #     self.auto = pygame.image.load_extended(os.path.join('src', 'auto.png'))
-    #     self.auto = pygame.transform.scale(self.auto, (80, 80))
-
-    # display the graphics in the window
-    # def display(self):
-    #     self.screen.blit(self.board, (0, 0))
-    #     self.screen.blit(self.reset, (590, 50))
-    #     self.screen.blit(self.computer, (590, 200))
-    #     self.screen.blit(self.auto, (590, 340))
-    #     for i in range(8):
-    #         for j in range(8):
-    #             if self.boardmatrix[i][j] == 1:
-    #                 self.screen.blit(self.blackchess, (self.sizeofcell * j + 10, self.sizeofcell * i + 10))
-    #             elif self.boardmatrix[i][j] == 2:
-    #                 self.screen.blit(self.whitechess, (self.sizeofcell * j + 10, self.sizeofcell * i + 10))
-    #     if self.status == 1:
-    #         # only downward is acceptable
-    #         if self.boardmatrix[self.ori_x][self.ori_y] == 1:
-    #             x1 = self.ori_x + 1
-    #             y1 = self.ori_y - 1
-    #             x2 = self.ori_x + 1
-    #             y2 = self.ori_y + 1
-    #             x3 = self.ori_x + 1
-    #             y3 = self.ori_y
-    #             # left down
-    #             if y1 >= 0 and self.boardmatrix[x1][y1] != 1:
-    #                 self.screen.blit(self.outline,
-    #                                  (self.sizeofcell * y1, self.sizeofcell * x1))
-    #             # right down
-    #             if y2 <= 7 and self.boardmatrix[x2][y2] != 1:
-    #                 self.screen.blit(self.outline,
-    #                                  (self.sizeofcell * y2, self.sizeofcell * x2))
-    #             # down
-    #             if x3 <= 7 and self.boardmatrix[x3][y3] == 0:
-    #                 self.screen.blit(self.outline,
-    #                                  (self.sizeofcell * y3, self.sizeofcell * x3))
-    #
-    #         if self.boardmatrix[self.ori_x][self.ori_y] == 2:
-    #             x1 = self.ori_x - 1
-    #             y1 = self.ori_y - 1
-    #             x2 = self.ori_x - 1
-    #             y2 = self.ori_y + 1
-    #             x3 = self.ori_x - 1
-    #             y3 = self.ori_y
-    #             # left up
-    #             if y1 >= 0 and self.boardmatrix[x1][y1] != 2:
-    #                 self.screen.blit(self.outline,
-    #                                  (self.sizeofcell * y1, self.sizeofcell * x1))
-    #             # right up
-    #             if y2 <= 7 and self.boardmatrix[x2][y2] != 2:
-    #                 self.screen.blit(self.outline,
-    #                                  (self.sizeofcell * y2, self.sizeofcell * x2))
-    #             # up
-    #             if x3 >= 0 and self.boardmatrix[x3][y3] == 0:
-    #                 self.screen.blit(self.outline,
-    #                                  (self.sizeofcell * y3, self.sizeofcell * x3))
-    #     if self.status == 3:
-    #         self.screen.blit(self.winner, (100, 100))
-
-    # def movechess(self):
-    #     self.boardmatrix[self.new_x][self.new_y] = self.boardmatrix[self.ori_x][self.ori_y]
-    #     self.boardmatrix[self.ori_x][self.ori_y] = 0
-    #     if self.turn == 1:
-    #         self.turn = 2
-    #     elif self.turn == 2:
-    #         self.turn = 1
-    #     self.status = 0
-    #
-    # def isreset(self, pos):
-    #     x, y = pos
-    #     if 670 >= x >= 590 and 50 <= y <= 130:
-    #         return True
-    #     return False
-    #
-    # def iscomputer(self, pos):
-    #     x, y = pos
-    #     if 590 <= x <= 670 and 200 <= y <= 280:
-    #         return True
-    #     return False
-    #
-    # def isauto(self, pos):
-    #     x, y = pos
-    #     if 590 <= x <= 670 and 340 <= y <= 420:
-    #         return True
-    #     return False
 
     def isabletomove(self):
         if (self.boardmatrix[self.ori_x][self.ori_y] == 1
@@ -263,6 +169,8 @@ class BreakthroughGame:
     def ai_move_minimax(self, function_type):
         board, nodes, piece = MinimaxAgent(self.boardmatrix, self.turn, 3, function_type).minimax_decision()
         self.boardmatrix = board.getMatrix()
+        for row in self.boardmatrix:    # print the current board state
+            print(row)
         if self.turn == 1:
             self.total_nodes_1 += nodes
             self.turn = 2
@@ -277,6 +185,8 @@ class BreakthroughGame:
     def ai_move_alphabeta(self, function_type):
         board, nodes, piece = AlphaBetaAgent(self.boardmatrix, self.turn, 5, function_type).alpha_beta_decision()
         self.boardmatrix = board.getMatrix()
+        for row in self.boardmatrix:    # print the current board state
+            print(row)
         if self.turn == 1:
             self.total_nodes_1 += nodes
             self.turn = 2
@@ -322,9 +232,22 @@ class BreakthroughGame:
         return False
 
 def main():
+
+    num_dict = {'A': 5, 'B': 6, 'C': 7, 'D': 8, 'E': 9, 'F': 10}
+    status = input("Breakthrough!:\n"
+                   "Choose a matchup:\n"
+                   "A. Minimax (Offensive Heuristic 1) vs Alpha-beta (Offensive Heuristic 1)\n"
+                   "B. Alpha-beta (Offensive Heuristic 2) vs Alpha-beta (Defensive Heuristic 1)\n"
+                   "C. Alpha-beta (Defensive Heuristic 2) vs Alpha-beta (Offensive Heuristic 1)\n"
+                   "D. Alpha-beta (Offensive Heuristic 2) vs Alpha-beta (Offensive Heuristic 1)\n"
+                   "E. Alpha-beta (Defensive Heuristic 2) vs Alpha-beta (Defensive Heuristic 1)\n"
+                   "F. Alpha-beta (Offensive Heuristic 2) vs Alpha-beta (Defensive Heuristic 2)\n")
+    print("Now loading...")
+
+    status = num_dict[status]
     game = BreakthroughGame()
     while True:
-        if game.run(5): # game is over once run returns True
+        if game.run(status): # game is over once run returns True
             break
 
 

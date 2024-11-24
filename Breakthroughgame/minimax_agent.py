@@ -1,25 +1,3 @@
-# from model import *
-#
-#
-# class MinimaxAgent:     # called by ai_move_minimax function
-#
-#     """
-#     Initialize values: board_matrix = 2d array that represents the board state,
-#                        turn = who's turn it is
-#                        depth = the max depth of the tree (we will use 3 for minimax)
-#                        function =
-#     """
-#     def __init__(self, boardmatrix, turn, depth, function, type=0):
-#         self.boardmatrix = boardmatrix
-#         self.turn = turn
-#         self.maxdepth = depth
-#         self.function = function
-#         self.type = type
-#         self.nodes = 0
-#         self.piece_num = 0
-#
-#
-
 import numpy as np
 from model import *
 

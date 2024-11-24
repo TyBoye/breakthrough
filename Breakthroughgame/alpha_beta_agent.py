@@ -20,7 +20,7 @@ class AlphaBetaAgent:
         actions = state.available_actions()
 
         # if self.turn == 1:
-        actions = sorted(state.available_actions(), key=lambda action: self.orderaction(action, state), reverse=True)
+        actions = sorted(state.available_actions(), key=lambda action: 0, reverse=True)
         # else:
         #    actions = sorted(state.available_actions(), key=lambda action: self.orderaction(action, state))
 
@@ -40,7 +40,7 @@ class AlphaBetaAgent:
         actions = state.available_actions()
 
         # if self.turn == 1:
-        actions = sorted(state.available_actions(), key=lambda action: self.orderaction(action, state))
+        actions = sorted(state.available_actions(), key=lambda action: 0)
         # else:
         #    actions = sorted(state.available_actions(), key=lambda action: self.orderaction(action, state), reverse=True)
 
@@ -78,43 +78,4 @@ class AlphaBetaAgent:
         elif self.turn == 2:
             self.piece_num = initialstate.transfer(final_action).black_num
         print(final_action.getString())
-        for row in self.boardmatrix:
-            print(row)
         return initialstate.transfer(final_action), self.nodes, self.piece_num
-
-    # order actions to make more pruning
-    def orderaction(self, action, state):
-        '''
-        y = action.coordinate[0]
-        x = action.coordinate[1]
-        if action.turn == 1:
-            if action.direction == 1:
-                if (y - 1, x - 1) in state.white_positions:
-                    return 2
-            if action.direction == 2:
-                if (y - 1, x) in state.white_positions:
-                    return 2
-            if action.direction == 2:
-                if (y - 1, x + 1) in state.white_positions:
-                    return 2
-
-        elif action.turn == 2:
-            if action.direction == 1:
-                if (y + 1, x - 1) in state.black_positions:
-                    return 2
-            if action.direction == 2:
-                if (y + 1, x) in state.black_positions:
-                    return 2
-            if action.direction == 2:
-                if (y + 1, x + 1) in state.black_positions:
-                    return 2
-        return 1
-            #if action.coordinate[]
-        '''
-        # print(self.turn)
-        # return state.transfer(action).utility(self.turn)
-        # if action.turn == 1:
-        #    return max(state.get_farthest_piece(self.turn), action.coordinate[0] + 1)
-        # elif action.turn == 2:
-        #    return max(state.get_farthest_piece(self.turn), 7 - action.coordinate[0] + 1)
-        return 0
