@@ -135,7 +135,8 @@ class BreakthroughGame:
             print(f"White average nodes per move: {self.total_nodes_2 / self.total_step_2}")
             print(f"White average time per move: {self.total_time_2 / self.total_step_2}")
             print(f"White moves needed to win: {white_min}")
-            print(f"Total pieces eaten: {self.eat_piece}")
+            print(f"White pieces eaten: {self.eat_piece_1}")
+            print(f"Black pieces eaten: {self.eat_piece_2}")
 
             print(f"Final board:")
             for row in self.boardmatrix:
@@ -173,11 +174,11 @@ class BreakthroughGame:
             print(row)
         if self.turn == 1:
             self.total_nodes_1 += nodes
+            self.eat_piece_1 = 16 - piece
             self.turn = 2
         elif self.turn == 2:
             self.total_nodes_2 += nodes
             self.turn = 1
-        self.eat_piece = 16 - piece
         if self.isgoalstate():
             self.status = 3
             #print(self.boardmatrix)
@@ -189,11 +190,11 @@ class BreakthroughGame:
             print(row)
         if self.turn == 1:
             self.total_nodes_1 += nodes
+            self.eat_piece_2 = 16 - piece
             self.turn = 2
         elif self.turn == 2:
             self.total_nodes_2 += nodes
             self.turn = 1
-        self.eat_piece = 16 - piece
         if self.isgoalstate():
             self.status = 3
 
