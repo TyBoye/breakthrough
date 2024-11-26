@@ -111,7 +111,7 @@ class BreakthroughGame:
         if self.status == 3 or self.isgoalstate():
             self.game_over = True
             winner = "Black" if self.turn == 2 else "White"
-            print(f"\nGame Over: {winner} wins!")
+            
             black_dist = []
             white_dist = []
 
@@ -126,25 +126,28 @@ class BreakthroughGame:
             white_min = min(white_dist) if white_dist else float('inf')
 
             # Print final statistics
-            print("\nFinal Statistics:")
-            print(f"Black moves: {self.total_step_1}")
-            print(f"Black average nodes per move: {self.total_nodes_1 / self.total_step_1}")
-            print(f"Black average time per move: {self.total_time_1 / self.total_step_1}")
-            print(f"Black moves needed to win: {black_min}")
-            print(f"White moves: {self.total_step_2}")
-            print(f"White average nodes per move: {self.total_nodes_2 / self.total_step_2}")
-            print(f"White average time per move: {self.total_time_2 / self.total_step_2}")
-            print(f"White moves needed to win: {white_min}")
-            print(f"White pieces eaten: {self.eat_piece_1}")
-            print(f"Black pieces eaten: {self.eat_piece_2}")
+            print("\nFinal Statistics:\n")
 
-            print(f"Final board:")
+            print(f"Game Over: {winner} wins!")
+
+            print(f"\nBlack - Total Number of Moves: {self.total_step_1}")
+            print(f"Black - Total Number of Nodes Expanded: {self.total_nodes_1}")
+            print(f"Black - Average Expanded Nodes per Move: {self.total_nodes_1 / self.total_step_1}")
+            print(f"Black - Average Time per Move: {self.total_time_1 / self.total_step_1}")
+            print(f"Black - Number of White Workers Captured: {self.eat_piece_1}")
+            print(f"Black - Moves Required till Win: {black_min}")
+
+            print(f"\nWhite - Total Number of Moves: {self.total_step_2}")
+            print(f"White - Total Number of Nodes Expanded: {self.total_nodes_2}")
+            print(f"White - Average Expanded Nodes per Move: {self.total_nodes_2 / self.total_step_2}")
+            print(f"White - Average Time per Move: {self.total_time_2 / self.total_step_2}")
+            print(f"White - Number of Black Workers Captured: {self.eat_piece_2}")
+            print(f"White - Moves Required till Win: {white_min}")
+
+            print(f"\nFinal board:")
             for row in self.boardmatrix:
                 print(row)
             return True
-
-
-
         return False
 
     def isabletomove(self):
@@ -184,7 +187,7 @@ class BreakthroughGame:
             #print(self.boardmatrix)
 
     def ai_move_alphabeta(self, function_type):
-        board, nodes, piece = AlphaBetaAgent(self.boardmatrix, self.turn, 5, function_type).alpha_beta_decision()
+        board, nodes, piece = AlphaBetaAgent(self.boardmatrix, self.turn, 4, function_type).alpha_beta_decision()
         self.boardmatrix = board.getMatrix()
         for row in self.boardmatrix:    # print the current board state
             print(row)
