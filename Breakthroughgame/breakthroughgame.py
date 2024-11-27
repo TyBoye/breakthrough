@@ -50,7 +50,7 @@ class BreakthroughGame:
 
         self.status = status
 
-        if self.status in [5,6,7,9,9,10]:
+        if self.status in [5,6,7,8,9,10]:
             """
             5. Minimax (Offensive Heuristic 1) vs Alpha-beta (Offensive Heuristic 1)
             6. Alpha-beta (Offensive Heuristic 2) vs Alpha-beta (Defensive Heuristic 1)\n"
@@ -193,10 +193,11 @@ class BreakthroughGame:
             print(row)
         if self.turn == 1:
             self.total_nodes_1 += nodes
-            self.eat_piece_2 = 16 - piece
+            self.eat_piece_1 = 16 - piece
             self.turn = 2
         elif self.turn == 2:
             self.total_nodes_2 += nodes
+            self.eat_piece_2 = 16 - piece
             self.turn = 1
         if self.isgoalstate():
             self.status = 3
